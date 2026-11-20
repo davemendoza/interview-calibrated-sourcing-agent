@@ -14,6 +14,12 @@ It started from a simple finding: when post-interview feedback for a Staff engin
 
 ## How it works
 
+Two pages explain the parts most people ask about:
+* [How the agent learns who succeeds](docs/HOW_THE_AGENT_LEARNS.md): the calibration workbook, the test gate, and how interview outcomes reweight signals.
+* [Plain-English guide for talent leaders](docs/GUIDE_FOR_TALENT_LEADERS.md)
+
+![How the agent learns who succeeds](docs/images/learning-loop.png)
+
 ```
  Stage 0  Interview calibration    signals that decided past interviews, with weights
     |
@@ -70,7 +76,7 @@ Before sourcing a role live, run the agent against people you have already tiere
 * any wrong-person match is found, or identity has not been checked
 
 ### Stage 6: recalibrate from outcomes
-After each interview round, add rows to `data/outcomes.csv`:
+After each interview round, add rows to the **Outcomes** tab of your calibration workbook ([template](templates/Calibration_Workbook_TEMPLATE.xlsx), saved as `data/calibration_workbook.xlsx`), or to `data/outcomes.csv` with the same columns:
 
 ```
 name,stage,result,passed_signals,failed_signals
@@ -153,7 +159,9 @@ Edit seed repos, patent assignees, institutions and events in your role file.
 
 ```
 config/roles/          TEMPLATE_role.toml plus a fintech example; one file per role
-docs/                  plain-English guide for talent leaders
+docs/                  talent leader guide, how the agent learns, demo images
+templates/             calibration workbook (Signals, Test Set, Outcomes, Signal Summary)
+examples/              fictional outcomes that reproduce the learning-loop image
 src/icsa/harvesters/   github, patents, openalex, talks (parse functions are pure and tested)
 src/icsa/identity.py   identity gate
 src/icsa/scorer.py     fail-closed tiering

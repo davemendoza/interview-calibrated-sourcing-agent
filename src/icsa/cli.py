@@ -12,6 +12,15 @@ from . import evaluate as ev
 from . import pipeline, recalibrate
 from .config import load_role
 
+WORKBOOK = Path("data/calibration_workbook.xlsx")
+
+
+def _default(path: str | None, fallback: str) -> str:
+    """Use the calibration workbook when present, else the older separate file."""
+    if path:
+        return path
+    return str(WORKBOOK) if WORKBOOK.exists() else fallback
+
 
 def _load_dotenv(path: Path = Path(".env")) -> None:
     if not path.exists():
@@ -45,17 +54,17 @@ def main(argv: list[str] | None = None) -> int:
     role_arg(r)
     r.add_argument("--evidence", default="data/evidence.jsonl")
     r.add_argument("--out", default="out")
-    r.add_argument("--test-set", default="data/test_set.xlsx")
+    r.add_argument("--test-set", default=None, help="default: data/calibration_workbook.xlsx, else data/test_set.xlsx")
     r.add_argument("--only", nargs="*", choices=list(pipeline.HARVESTERS))
 
     e = sub.add_parser("eval", help="score the agent against your tiered test set")
-    e.add_argument("--test-set", default="data/test_set.xlsx")
+    e.add_argument("--test-set", default=None, help="default: data/calibration_workbook.xlsx, else data/test_set.xlsx")
     e.add_argument("--results", default="out/leads.csv")
     e.add_argument("--review", default="data/identity_review.csv")
 
     c = sub.add_parser("recalibrate", help="learn signal weights from interview outcomes")
     role_arg(c)
-    c.add_argument("--outcomes", default="data/outcomes.csv")
+    c.add_argument("--outcomes", default=None, help="default: data/calibration_workbook.xlsx (Outcomes tab), else data/outcomes.csv")
     c.add_argument("--matrix", default="out/signal_matrix.csv")
     c.add_argument("--save", default="data/calibration.json")
 
@@ -74,16 +83,17 @@ def main(argv: list[str] | None = None) -> int:
         counts = Counter(c.tier for c in cands)
         print("Results: " + ", ".join(f"{t}: {n}" for t, n in sorted(counts.items())))
         print(f"Wrote {a.out}/leads.xlsx, leads.csv and signal_matrix.csv")
-        if a.cmd == "run" and Path(a.test_set).exists():
-            return _eval(Path(a.test_set), Path(a.out) / "leads.csv", Path("data/identity_review.csv"))
+        test_set = Path(_default(a.test_set, "data/test_set.xlsx"))
+        if a.cmd == "run" and test_set.exists():
+            return _eval(test_set, Path(a.out) / "leads.csv", Path("data/identity_review.csv"))
         return 0
 
     if a.cmd == "eval":
-        return _eval(Path(a.test_set), Path(a.results), Path(a.review))
+        return _eval(Path(_default(a.test_set, "data/test_set.xlsx")), Path(a.results), Path(a.review))
 
     if a.cmd == "recalibrate":
         role = load_role(a.role, calibration=None)  # always learn from the role file's base weights
-        rep = recalibrate.recalibrate(role, Path(a.outcomes), Path(a.matrix))
+        rep = recalibrate.recalibrate(role, Path(_default(a.outcomes, "data/outcomes.csv")), Path(a.matrix))
         if "note" in rep:
             print(rep["note"])
             return 0

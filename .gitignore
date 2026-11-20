@@ -5,6 +5,7 @@ out/
 .cache/
 .env
 *.xlsx
+!templates/*.xlsx
 *.csv
 !tests/fixtures/*.csv
 
@@ -12,3 +13,4 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .venv/
+!examples/**/*.csv

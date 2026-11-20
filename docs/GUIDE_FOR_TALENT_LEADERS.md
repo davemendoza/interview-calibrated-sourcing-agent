@@ -60,7 +60,9 @@ These become the agent's **interview signals**. You will put them in the role fi
 
 ## Step 2: Make your check list (a spreadsheet)
 
-Make a spreadsheet with three columns, exactly these names:
+The easiest way: download the ready-made workbook, [`templates/Calibration_Workbook_TEMPLATE.xlsx`](../templates/Calibration_Workbook_TEMPLATE.xlsx). It has a tab for this list, a tab for interview outcomes (Step 6), and a summary tab that shows which signals separate people who advance from people who do not. Yellow cells are yours to fill in. Save your copy in the `data` folder as `calibration_workbook.xlsx`.
+
+If you prefer your own spreadsheet, use three columns with exactly these names:
 
 | Name | Your tier | Test challenge |
 |---|---|---|
@@ -71,7 +73,7 @@ Make a spreadsheet with three columns, exactly these names:
 * Aim for about 20 Tier 1, 15 Tier 2, 10 Tier 3 and 5 Traps. Fewer is fine to start.
 * Rate everyone **before** you run the agent, so the agent cannot sway your judgment.
 
-Save it as `test_set.xlsx`.
+Save it as `test_set.xlsx` (or use the workbook's **Test Set** tab).
 
 ## Step 3: Install and fill in your role file (about 20 minutes, one time)
 
@@ -131,7 +133,7 @@ What the labels mean:
 
 ## Step 6: After interviews, tell it what happened
 
-Keep a spreadsheet called `outcomes.csv` in the `data` folder with these columns:
+Use the **Outcomes** tab of your calibration workbook (or a spreadsheet called `outcomes.csv` in the `data` folder) with these columns:
 
 | name | stage | result | passed_signals | failed_signals |
 |---|---|---|---|---|
@@ -145,7 +147,7 @@ Once you have at least 5 outcomes, run:
 icsa recalibrate --role config/roles/my_role.toml
 ```
 
-The agent will tell you which signals mattered most, and it will weigh them more heavily from then on.
+The agent will tell you which signals mattered most, and it will weigh them more heavily from then on. The workbook's **Signal Summary** tab shows the same story at a glance, and [How the agent learns](HOW_THE_AGENT_LEARNS.md) explains the numbers in plain terms.
 
 ---
 

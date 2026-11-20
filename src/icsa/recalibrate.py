@@ -22,6 +22,7 @@ import json
 from datetime import date
 from pathlib import Path
 
+from .evaluate import _read_rows, is_example
 from .models import normalize_name
 
 MIN_OUTCOMES = 5
@@ -33,8 +34,12 @@ def _split(v: str | None) -> set[str]:
 
 
 def recalibrate(role: dict, outcomes_path: Path, matrix_path: Path) -> dict:
-    with outcomes_path.open(newline="", encoding="utf-8-sig") as f:
-        outcomes = [r for r in csv.DictReader(f) if (r.get("name") or "").strip()]
+    rows = _read_rows(outcomes_path, sheet="Outcomes")
+    outcomes = [
+        {k: ("" if v is None else str(v)) for k, v in r.items() if k}
+        for r in rows
+        if str(r.get("name") or "").strip() and not is_example(r.get("name"))
+    ]
     matrix: dict[str, dict] = {}
     if matrix_path.exists():
         with matrix_path.open(newline="", encoding="utf-8") as f:

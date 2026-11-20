@@ -24,6 +24,11 @@ GATES = {
 }
 
 
+def is_example(name: str) -> bool:
+    """Template example rows start with 'Example' and are never treated as people."""
+    return str(name or "").strip().lower().startswith("example")
+
+
 def _read_rows(path: Path, sheet: str = "Test Set") -> list[dict]:
     if path.suffix.lower() in (".xlsx", ".xlsm"):
         from openpyxl import load_workbook
@@ -42,7 +47,7 @@ def load_test_set(path: Path) -> list[dict]:
     for r in _read_rows(path):
         name = str(r.get("Name") or "").strip()
         tier = str(r.get("Your tier") or "").strip()
-        if name and tier and tier != "None":
+        if name and tier and tier != "None" and not is_example(name):
             out.append({"name": name, "tier": tier, "challenge": str(r.get("Test challenge") or "").strip()})
     return out
 

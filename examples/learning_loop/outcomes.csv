@@ -1,0 +1,11 @@
+name,stage,result,passed_signals,failed_signals
+Riya Patel,System design,advanced,money_state;incident_to_prevention,
+Jordan Okafor,Hiring manager,advanced,owned_decision;money_state,
+Tom Reyes,System design,not advanced,cross_team_influence,money_state
+Mei Lindqvist,Hiring manager,not advanced,ai_with_verification,owned_decision
+Lee Chen,Hiring manager,not advanced,,owned_decision;money_state
+Priya Nair,System design,advanced,money_state,
+Diego Alvarez,AI fluency,not advanced,cross_team_influence,ai_with_verification
+Hana Sato,Ownership and operations,advanced,incident_to_prevention,
+Omar Haddad,Hiring manager,advanced,owned_decision,
+Grace Kim,System design,not advanced,,money_state
