@@ -18,6 +18,7 @@ You tell the agent what your best interviewers listen for. It then searches publ
 | A list of 10 to 50 people you have already rated | 30 minutes | This is how you check the agent before trusting it |
 | A computer (Mac or Windows) | | It runs on your own computer, so your data stays with you |
 | A free GitHub account | 5 minutes | GitHub is where the code lives and where many engineers share their work |
+| The calibration workbook | 1 click | [Download it here](https://github.com/davemendoza/interview-calibrated-sourcing-agent/raw/main/templates/Calibration_Workbook_TEMPLATE.xlsx); it holds everything you fill in |
 
 ---
 
@@ -60,7 +61,7 @@ These become the agent's **interview signals**. You will put them in the role fi
 
 ## Step 2: Make your check list (a spreadsheet)
 
-The easiest way: download the ready-made workbook, [`templates/Calibration_Workbook_TEMPLATE.xlsx`](../templates/Calibration_Workbook_TEMPLATE.xlsx). It has a tab for this list, a tab for interview outcomes (Step 6), and a summary tab that shows which signals separate people who advance from people who do not. Yellow cells are yours to fill in. Save your copy in the `data` folder as `calibration_workbook.xlsx`.
+The easiest way: **[download the ready-made workbook](https://github.com/davemendoza/interview-calibrated-sourcing-agent/raw/main/templates/Calibration_Workbook_TEMPLATE.xlsx)** (one click, opens in Excel or Google Sheets). It has a tab for this list, a tab for interview outcomes (Step 6), and a summary tab that shows which signals separate people who advance from people who do not. Yellow cells are yours to fill in. Save your copy in the `data` folder as `calibration_workbook.xlsx`.
 
 If you prefer your own spreadsheet, use three columns with exactly these names:
 

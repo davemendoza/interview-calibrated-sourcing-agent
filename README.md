@@ -3,6 +3,8 @@
 **Open-web sourcing that learns from post-interview evaluations.**
 
 > **New to this, or not technical?** Start with the [plain-English guide for talent leaders](docs/GUIDE_FOR_TALENT_LEADERS.md). It walks you through running your own version in six steps, or having Claude set it up for you.
+>
+> **[Download the calibration workbook (Excel)](https://github.com/davemendoza/interview-calibrated-sourcing-agent/raw/main/templates/Calibration_Workbook_TEMPLATE.xlsx)** to record your own interview signals, the people you have already rated, and interview outcomes. Fill in the yellow cells; the How to Use tab explains each step.
 
 Most sourcing tools re-rank the same LinkedIn profiles every other recruiter sees. This agent finds engineers by the work they have done in public, then calibrates what it looks for using the signals that actually decided interview outcomes.
 
