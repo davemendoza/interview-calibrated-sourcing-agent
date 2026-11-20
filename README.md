@@ -8,6 +8,10 @@ Most sourcing tools re-rank the same LinkedIn profiles every other recruiter see
 
 It started from a simple finding: when post-interview feedback for a Staff engineering loop was analyzed, candidates rarely failed the first question. They failed the follow-up. "What did you personally decide?" "What does the caller get when that payment call times out?" "How would you prove the AI output is correct?" Those deciding signals should be the first thing a sourcer looks for, and interview results should flow back into how leads are scored.
 
+![Leads tab with fictional demo data: tiered leads, identity checks, interview signals and screen questions](docs/images/leads-demo.png)
+
+*What the agent returns, using fictional demo data scored by the agent's real rules. [Close-up: tiered leads](docs/images/leads-demo-closeup-tiers.png) · [Close-up: namesakes and screen questions](docs/images/leads-demo-closeup-identity-questions.png)*
+
 ## How it works
 
 ```
