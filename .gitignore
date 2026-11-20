@@ -1,0 +1,14 @@
+# Local data never leaves your machine: test sets, interview outcomes, results
+data/*
+!data/README.md
+out/
+.cache/
+.env
+*.xlsx
+*.csv
+!tests/fixtures/*.csv
+
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.venv/

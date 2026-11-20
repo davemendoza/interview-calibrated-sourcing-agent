@@ -1,0 +1,124 @@
+# Example role: Staff Software Engineer, payments infrastructure.
+# Copy this file to calibrate a new role. Keep client names and private rules
+# in a copy under data/ (ignored by git) if they should not be public.
+
+[role]
+title = "Staff Software Engineer, Payments Infrastructure"
+# Leads outside these metros are kept but marked "location unconfirmed".
+metros = ["sf_bay", "nyc"]
+# Domain evidence older than this many years drops the lead one tier.
+recency_years = 3
+# A Tier 1 lead needs domain evidence from at least this many channels
+# (commit, patent, paper, blog, package, talk).
+tier1_min_channels = 2
+# A single channel can still reach Tier 1 with this many commits to seed repos.
+tier1_min_commits = 75
+
+# ---------------------------------------------------------------------------
+# Stage 0: interview calibration.
+# These are the signals that decided post-interview outcomes. The agent looks
+# for public evidence of each one before outreach. A signal with no evidence
+# becomes a screen question for that lead. `icsa recalibrate` adjusts weights
+# from data/outcomes.csv after each interview round.
+# ---------------------------------------------------------------------------
+
+[[interview_signals]]
+id = "money_state"
+label = "Money-state correctness: idempotency, unknown outcomes, timeouts, reconciliation"
+weight = 1.0
+terms = ["idempoten", "exactly-once", "exactly once", "reconcil", "double spend", "double-spend", "timeout", "retry", "unknown outcome", "two-phase", "saga", "outbox", "ledger"]
+screen_question = "Walk me through a payment call that times out. What does the caller see, and how do you prove the money moved exactly once?"
+
+[[interview_signals]]
+id = "owned_decision"
+label = "One owned, defended technical decision with alternatives and a result"
+weight = 1.0
+terms = ["rfc", "design doc", "architecture decision", "adr", "proposal", "migrat", "rewrite", "deprecat", "tradeoff", "trade-off"]
+screen_question = "Tell me about one technical decision you personally made and defended. What were the alternatives, who disagreed, and what happened?"
+
+[[interview_signals]]
+id = "incident_to_prevention"
+label = "Incident told from detection to prevention"
+weight = 0.8
+terms = ["incident", "postmortem", "post-mortem", "outage", "on-call", "oncall", "slo", "sla", "root cause", "resilien", "chaos"]
+screen_question = "Describe an incident you led from detection to prevention. What changed in the process, not just the code?"
+
+[[interview_signals]]
+id = "cross_team_influence"
+label = "Cross-team influence with a mechanism (contracts, reviews, shared libraries)"
+weight = 0.8
+terms = ["platform", "sdk", "framework", "library", "api contract", "schema", "maintainer", "core team", "standard", "spec"]
+screen_question = "How did you get another team to adopt something you built? What was the mechanism: a contract, a review, a shared library?"
+
+[[interview_signals]]
+id = "ai_with_verification"
+label = "AI use with a verification story"
+weight = 0.7
+terms = ["llm", "machine learning", " ml ", "model", "agent", "copilot", "eval", "fraud detection", "anomaly"]
+screen_question = "Give me a concrete case where AI-generated output was wrong and how you caught it. What do you keep deterministic?"
+
+# ---------------------------------------------------------------------------
+# Role requirements. "domain" requirements decide whether a lead is scored at
+# all (no domain evidence means Pending research, never a guessed tier).
+# ---------------------------------------------------------------------------
+
+[[requirements]]
+id = "payments_domain"
+label = "Payments or banking domain work"
+kind = "domain"
+terms = ["payment", "ach", "rtp", "fednow", "wire", "iso 20022", "iso20022", "settlement", "ledger", "payout", "card", "acquir", "issuing", "bank", "open banking", "fdx", "money movement", "checkout", "billing", "fraud", "kyc", "plaid", "stripe", "square", "cash app", "cashapp", "adyen", "moov"]
+
+[[requirements]]
+id = "backend_scale"
+label = "Backend systems at scale"
+kind = "core"
+terms = ["distributed", "kafka", "grpc", "microservice", "postgres", "database", "throughput", "latency", "event", "stream", "queue", "java", "kotlin", "go ", "golang", "scala", "rust"]
+
+[[requirements]]
+id = "adjacent_only"
+label = "Adjacent domain (counts toward Tier 3 only when no payments evidence exists)"
+kind = "adjacent"
+terms = ["database internals", "storage engine", "query engine", "compiler"]
+
+# ---------------------------------------------------------------------------
+# Open-web sources. Edit freely. Everything here is public data.
+# ---------------------------------------------------------------------------
+
+[sources.github]
+# Repos whose contributors are harvested. Format: owner/repo
+repos = [
+  "moov-io/ach",
+  "moov-io/watchman",
+  "cashapp/misk",
+  "stripe/stripe-go",
+  "stripe/stripe-java",
+  "formancehq/ledger",
+  "tigerbeetle/tigerbeetle",
+  "adyen/adyen-java-api-library",
+  "plaid/plaid-python",
+]
+# Ignore drive-by contributors.
+min_contributions = 10
+# Cap per repo to protect your API quota.
+max_contributors_per_repo = 60
+
+[sources.patents]
+# PatentsView PatentSearch API. Assignee names must match USPTO spelling.
+endpoint = "https://search.patentsview.org/api/v1/patent/"
+assignees = ["Stripe, Inc.", "Plaid Inc.", "Block, Inc.", "Square, Inc.", "Chime Financial, Inc.", "Affirm, Inc.", "Brex Inc.", "Coinbase, Inc."]
+since = "2021-01-01"
+max_per_assignee = 300
+
+[sources.openalex]
+institutions = ["Stripe", "Block (United States)", "Plaid"]
+topics = ["payments", "ledger", "fraud detection", "distributed transactions"]
+since = "2019-01-01"
+max_per_query = 50
+
+[sources.talks]
+# Sessionize event IDs (the part after sessionize.com/api/v2/ in an event's
+# public API link). Add IDs for engineering conferences and meetups you trust.
+sessionize_ids = []
+# Speaker or agenda pages. These are used to verify talks by people already
+# found elsewhere, never to create a lead from a name alone.
+pages = []
