@@ -78,7 +78,14 @@ Save it as `test_set.xlsx` (or use the workbook's **Test Set** tab).
 
 ## Step 3: Install and fill in your role file (about 20 minutes, one time)
 
-On a Mac, open the **Terminal** app (press Command and Space, type Terminal, press Return). Copy and paste each line below, one at a time, and press Return after each.
+**First, one-time setup (about 10 minutes):**
+
+1. **Install Python 3.11 or newer.** Most Macs come with an older version that will not work. Download the latest macOS installer from [python.org/downloads](https://www.python.org/downloads/) and run it like any other app.
+2. Open the **Terminal** app (press Command and Space, type Terminal, press Return).
+3. Type `python3 --version` and press Return. It should say 3.11 or higher. If it shows an older number, close Terminal, open it again, and check once more.
+4. The first time you use `git` below, your Mac may ask to install "command line developer tools." Click **Install**, wait for it to finish, then run the same line again.
+
+**Then copy and paste each line below, one at a time, and press Return after each:**
 
 ```bash
 cd ~/Documents
@@ -157,6 +164,8 @@ The agent will tell you which signals mattered most, and it will weigh them more
 | What you see | What it means | Fix |
 |---|---|---|
 | `command not found: icsa` | Terminal forgot the setup | Run `source .venv/bin/activate` first |
+| `requires a different Python` or `No module named 'tomllib'` | Your Python is older than 3.11 | Install the latest Python from python.org, then delete the `.venv` folder and repeat Step 3 from `python3 -m venv .venv` |
+| `xcrun: error` or a pop-up about developer tools | Your Mac needs Apple's free tools for `git` | Click Install in the pop-up, or run `xcode-select --install` |
 | `[github] skipped: ... rate limit` | GitHub needs a short rest | Wait an hour, or check your token in `.env` |
 | `[patents] skipped: PATENTSVIEW_API_KEY is not set` | Patent search is off | Optional. Request a free key on patentsview.org and add it to `.env` |
 | `[role file] ... is empty` | A **>>> CUSTOMIZE** line is not filled in | Open your role file and fill it in |
