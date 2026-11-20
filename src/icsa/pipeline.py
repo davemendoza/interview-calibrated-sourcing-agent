@@ -56,8 +56,10 @@ def load_evidence(path: Path) -> list[Evidence]:
         return [Evidence.from_json(line) for line in f if line.strip()]
 
 
-def score(role: dict, evidence_path: Path, out_dir: Path) -> list:
-    candidates = scorer.score_all(identity.resolve(load_evidence(evidence_path)), role)
+def score(role: dict, evidence_path: Path, out_dir: Path, judge=None) -> list:
+    candidates = scorer.score_all(identity.resolve(load_evidence(evidence_path)), role, judge)
+    if judge is not None:
+        print(f"[judge] {judge.calls} AI judgments ({judge.model})", file=sys.stderr)
     out_dir.mkdir(parents=True, exist_ok=True)
     output.write_csv(candidates, out_dir / "leads.csv")
     output.write_xlsx(candidates, out_dir / "leads.xlsx")

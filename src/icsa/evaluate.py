@@ -138,6 +138,23 @@ def evaluate(test_path: Path, results_path: Path, review_path: Path | None = Non
     return rep
 
 
+def pilot_summary(rep: Report) -> str:
+    """One name-free sentence for an article, a client update or a LinkedIn post."""
+    rows = rep.rows
+    t1 = [r for r in rows if r["Your tier"] == "Tier 1"]
+    traps = [r for r in rows if r["Your tier"] == "Trap"]
+    m = rep.metrics
+    parts = [f"Found {sum(r['Surfaced'] == 'Yes' for r in t1)} of my {len(t1)} known Tier 1 engineers"]
+    if traps:
+        parts.append(f"kept {sum(r['Agent tier'] != 'Tier 1' for r in traps)} of {len(traps)} traps out of Tier 1")
+    if m.get("wrong_person_rate") is not None:
+        parts.append(f"matched the wrong person {m['wrong_person_rate']:.0%} of the time")
+    if m.get("tier_agreement") is not None:
+        parts.append(f"agreed with my tier {m['tier_agreement']:.0%} of the time")
+    parts.append(f"and surfaced {m.get('new_tier1_or_2_finds', 0)} new Tier 1 or 2 leads I had not found")
+    return ", ".join(parts[:-1]) + ", " + parts[-1] + "."
+
+
 def _rate(n: int, d: int) -> float | None:
     return round(n / d, 3) if d else None
 

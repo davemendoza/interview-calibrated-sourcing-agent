@@ -144,3 +144,14 @@ sessionize_ids = []
 # Speaker or agenda pages. These are used to verify talks by people already
 # found elsewhere, never to create a lead from a name alone.
 pages = []
+
+# ---------------------------------------------------------------------------
+# Optional AI judgment step. After the keyword rules flag a possible signal,
+# a model reads the evidence and must quote the exact words that show it.
+# Only Tier 1 and Tier 2 leads are judged. Needs ANTHROPIC_API_KEY in .env.
+# Haiku is enough for this short reading task and keeps cost low.
+# ---------------------------------------------------------------------------
+[judge]
+enabled = false
+model = "claude-haiku-5-5"
+max_evidence_per_signal = 3

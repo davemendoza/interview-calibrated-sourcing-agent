@@ -85,6 +85,7 @@ class Check:
     status: str  # "met", "not met (aged)", "no evidence"
     sources: list[str] = field(default_factory=list)
     last_seen: str | None = None
+    note: str = ""  # e.g. the AI judge's quote, or why a keyword match was rejected
 
 
 @dataclass

@@ -9,6 +9,7 @@ from collections import Counter
 from pathlib import Path
 
 from . import evaluate as ev
+from . import judge as judge_mod
 from . import pipeline, recalibrate
 from .config import load_role
 
@@ -49,6 +50,7 @@ def main(argv: list[str] | None = None) -> int:
     role_arg(s)
     s.add_argument("--evidence", default="data/evidence.jsonl")
     s.add_argument("--out", default="out")
+    s.add_argument("--judge", action="store_true", help="AI-confirm signals for Tier 1 and 2 leads (needs ANTHROPIC_API_KEY)")
 
     r = sub.add_parser("run", help="harvest, score, then evaluate if a test set exists")
     role_arg(r)
@@ -56,6 +58,7 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--out", default="out")
     r.add_argument("--test-set", default=None, help="default: data/calibration_workbook.xlsx, else data/test_set.xlsx")
     r.add_argument("--only", nargs="*", choices=list(pipeline.HARVESTERS))
+    r.add_argument("--judge", action="store_true", help="AI-confirm signals for Tier 1 and 2 leads (needs ANTHROPIC_API_KEY)")
 
     e = sub.add_parser("eval", help="score the agent against your tiered test set")
     e.add_argument("--test-set", default=None, help="default: data/calibration_workbook.xlsx, else data/test_set.xlsx")
@@ -79,7 +82,7 @@ def main(argv: list[str] | None = None) -> int:
         role = load_role(a.role)
         if a.cmd == "run":
             pipeline.harvest(role, Path(a.evidence), a.only)
-        cands = pipeline.score(role, Path(a.evidence), Path(a.out))
+        cands = pipeline.score(role, Path(a.evidence), Path(a.out), judge_mod.from_role(role, force=a.judge))
         counts = Counter(c.tier for c in cands)
         print("Results: " + ", ".join(f"{t}: {n}" for t, n in sorted(counts.items())))
         print(f"Wrote {a.out}/leads.xlsx, leads.csv and signal_matrix.csv")
@@ -111,6 +114,7 @@ def _eval(test: Path, results: Path, review: Path) -> int:
     ev.write_review(rep, review if not review.exists() else review.with_name("identity_review_latest.csv"))
     for k, v in rep.metrics.items():
         print(f"  {k}: {v:.0%}" if isinstance(v, float) else f"  {k}: {v}")
+    print("\nShareable summary (no names):\n  " + ev.pilot_summary(rep))
     if rep.passed:
         print("GATE PASSED: the agent may source this role.")
         return 0

@@ -30,6 +30,7 @@ Two pages explain the parts most people ask about:
  Stage 2  Identity gate            never merge on name alone; two independent signals required
     |
  Stage 3  Score evidence           met / not met / no evidence per requirement, each with a link
+          (optional AI judge)      a model must quote the exact words that prove each signal
     |
  Stage 4  Output                   tiered leads, evidence sheet, screen questions for every gap
     |
@@ -67,6 +68,9 @@ Fail-closed: no evidence means no score.
 | Patent-only → capped at **Tier 2** | Strong signal, little public code |
 | Domain evidence older than `recency_years` → drop one tier | Old payments work is not current fit |
 | Evidence follows the person | Payments work done at a former employer still counts |
+
+### Optional: the AI judgment step
+Keyword rules are fast and auditable, but a keyword is not proof. With `icsa run --judge` (and `ANTHROPIC_API_KEY` in `.env`), a model reads each keyword-flagged piece of evidence for Tier 1 and Tier 2 leads and decides whether it really shows the signal. It must quote the exact words that show it. A quote that is not in the evidence is rejected, so the model cannot invent proof. If the model says no, the signal goes back to "no evidence" and becomes a screen question. If the model is unreachable, the keyword result stands with a note saying so. The default model is Claude Haiku, which is enough for a short reading task like this and keeps cost low.
 
 ### Stage 5: the test gate
 Before sourcing a role live, run the agent against people you have already tiered (20 Tier 1, 15 Tier 2, 10 Tier 3 and 5 traps is a good size). Traps are cases you have caught before: namesakes, people whose best evidence is old, strong titles with no checkable work. The gate fails if:
@@ -115,6 +119,22 @@ crontab -e
 # 2:17 AM every night
 17 2 * * * cd $HOME/interview-calibrated-sourcing-agent && ./scripts/nightly.sh >> out/nightly.log 2>&1
 ```
+
+## What it can't see
+
+Be clear-eyed about coverage. Open-web evidence covers engineers who build in public: open-source contributors, patent inventors, paper authors and conference speakers. Many excellent engineers, especially in regulated industries like banking and payments, leave little or no public trace because their work is proprietary.
+
+For those people this agent finds nothing, and by design it says "Pending research" rather than guessing. It is a complement to your existing sourcing, not a replacement:
+
+* Use it to find the visible minority faster and with proof attached.
+* Use its screen questions for everyone, including people you found elsewhere, so every first call tests the signals that decide your interviews.
+* Use the calibration workbook even if you never run the code. Recording which signals decide your interviews is valuable on its own.
+
+## Your first pilot
+
+1. Fill in the calibration workbook's Test Set with people you have already rated, including a few traps.
+2. Run `icsa run`, then mark Right person yes or no in `data/identity_review.csv` and run `icsa eval` again.
+3. `icsa eval` ends with a one-sentence summary with no names in it, ready to share. For example: *"Found 9 of my 12 known Tier 1 engineers, kept 3 of 3 traps out of Tier 1, matched the wrong person 0% of the time, agreed with my tier 75% of the time, and surfaced 4 new Tier 1 or 2 leads I had not found."*
 
 ## Adapt it to your domain
 
@@ -167,6 +187,7 @@ examples/              fictional outcomes that reproduce the learning-loop image
 src/icsa/harvesters/   github, patents, openalex, talks (parse functions are pure and tested)
 src/icsa/identity.py   identity gate
 src/icsa/scorer.py     fail-closed tiering
+src/icsa/judge.py      optional AI judgment step with quote verification
 src/icsa/evaluate.py   test gate against your tiered test set
 src/icsa/recalibrate.py  learning from interview outcomes
 tests/                 fictional fixtures only
@@ -175,6 +196,7 @@ tests/                 fictional fixtures only
 ## Roadmap
 
 * Engineering blog bylines and package-registry maintainers as harvesters
+* Richer text for the AI judge (README files, design docs, talk abstracts)
 * A skeptic pass that tries to disprove each Tier 1 before a person sees it
 * Job-change monitoring for Tier 1 leads
 * Trajectory scoring: how fast someone's scope is rising, not only where it is today

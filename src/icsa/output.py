@@ -10,7 +10,7 @@ from .models import Candidate
 
 LEAD_COLUMNS = [
     "Tier", "Recommendation", "Name", "Company", "Location", "Identity", "Interview signal score",
-    "Matched requirements", "Signals with evidence", "Key evidence", "Latest evidence", "GitHub",
+    "Matched requirements", "Signals with evidence", "AI judge notes", "Key evidence", "Latest evidence", "GitHub",
     "Self-published links", "Self-published email", "Sources", "Tier reasons",
 ]
 
@@ -32,6 +32,7 @@ def _row(c: Candidate) -> dict:
         "Interview signal score": c.signal_score,
         "Matched requirements": "; ".join(met_req),
         "Signals with evidence": "; ".join(met_sig),
+        "AI judge notes": " | ".join(f"{s.id}: {s.note}" for s in c.signals if s.note),
         "Key evidence": " | ".join(e.title for e in key[:3]),
         "Latest evidence": c.latest_date or "Not found",
         "GitHub": f"https://github.com/{handle}" if handle else "",

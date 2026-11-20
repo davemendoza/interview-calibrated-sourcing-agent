@@ -42,19 +42,7 @@ def _check(item: dict, evidence: list[Evidence], recency_years: int) -> Check:
     return Check(item["id"], item["label"], status, [e.url for e in hits][:5], last)
 
 
-def _drop(tier: str) -> str:
-    return TIERS[min(TIERS.index(tier) + 1, 2)]
-
-
-def score(c: Candidate, role: dict) -> Candidate:
-    cfg = role.get("role", {})
-    labels = _labels(role)
-    domain_name = labels["domain_name"]
-    recency = int(cfg.get("recency_years", 3))
-
-    c.requirements = [_check(r, c.evidence, recency) for r in role.get("requirements", [])]
-    c.signals = [_check(s, c.evidence, recency) for s in role.get("interview_signals", [])]
-
+def _signal_summary(c: Candidate, role: dict) -> None:
     weights = {s["id"]: float(s.get("weight", 1.0)) for s in role.get("interview_signals", [])}
     total = sum(weights.values()) or 1.0
     c.signal_score = round(sum(weights[s.id] for s in c.signals if s.status == "met") / total, 3)
@@ -62,6 +50,45 @@ def score(c: Candidate, role: dict) -> Candidate:
         s["screen_question"] for s, chk in zip(role.get("interview_signals", []), c.signals)
         if chk.status != "met" and s.get("screen_question")
     ]
+
+
+def apply_judge(c: Candidate, role: dict, judge) -> None:
+    """Ask the AI judge to confirm each keyword-flagged signal. Fail-closed on 'no'/'unclear',
+    fail-open (keep the keyword result, with a note) only when the judge itself is unavailable."""
+    by_id = {s["id"]: s for s in role.get("interview_signals", [])}
+    for chk in c.signals:
+        if chk.status != "met":
+            continue
+        sig = by_id[chk.id]
+        hits = [e for e in c.evidence if _matches(e, sig.get("terms", []))][: judge.max_evidence]
+        verdicts = [(e, judge.judge(sig, e)) for e in hits]
+        confirmed = [(e, v) for e, v in verdicts if v.verdict == "yes"]
+        if confirmed:
+            e, v = confirmed[0]
+            chk.sources = [e.url for e, _ in confirmed][:5]
+            chk.note = f'AI-confirmed: "{v.quote}"'
+        elif verdicts and all(v.verdict == "error" for _, v in verdicts):
+            chk.note = "AI judge unavailable; keyword match only"
+        else:
+            chk.status = "no evidence"
+            chk.sources = []
+            chk.note = "Keyword match not confirmed by AI judge"
+    _signal_summary(c, role)
+
+
+def _drop(tier: str) -> str:
+    return TIERS[min(TIERS.index(tier) + 1, 2)]
+
+
+def score(c: Candidate, role: dict, judge=None) -> Candidate:
+    cfg = role.get("role", {})
+    labels = _labels(role)
+    domain_name = labels["domain_name"]
+    recency = int(cfg.get("recency_years", 3))
+
+    c.requirements = [_check(r, c.evidence, recency) for r in role.get("requirements", [])]
+    c.signals = [_check(s, c.evidence, recency) for s in role.get("interview_signals", [])]
+    _signal_summary(c, role)
 
     reasons: list[str] = []
     by_kind = {r["id"]: r.get("kind", "core") for r in role.get("requirements", [])}
@@ -118,11 +145,13 @@ def score(c: Candidate, role: dict) -> Candidate:
         reasons.append("Identity confirmed by two independent signals")
 
     c.tier, c.recommendation, c.tier_reasons = tier, _recommendation(tier, labels), reasons
+    if judge is not None and tier in ("Tier 1", "Tier 2"):
+        apply_judge(c, role, judge)
     return c
 
 
-def score_all(candidates: list[Candidate], role: dict) -> list[Candidate]:
+def score_all(candidates: list[Candidate], role: dict, judge=None) -> list[Candidate]:
     labels = _labels(role)
     order = {t: i for i, t in enumerate(TIERS + [labels["identity_review"], labels["pending"]])}
-    scored = [score(c, role) for c in candidates]
+    scored = [score(c, role, judge) for c in candidates]
     return sorted(scored, key=lambda c: (order.get(c.tier, 9), -c.signal_score, c.name))
