@@ -11,4 +11,4 @@ ROOT = Path(__file__).resolve().parents[1]
 
 @pytest.fixture
 def role():
-    return load_role(ROOT / "config/roles/staff_payments_engineer.toml", calibration=None)
+    return load_role(ROOT / "config/roles/example_fintech_staff_payments_engineer.toml", calibration=None)

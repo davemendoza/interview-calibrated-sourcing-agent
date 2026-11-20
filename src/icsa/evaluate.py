@@ -60,7 +60,7 @@ def load_results(path: Path) -> dict[str, dict]:
 
 
 def _rank(tier: str) -> int:
-    return {"Tier 1": 0, "Tier 2": 1, "Tier 3": 2, "Identity review": 3}.get(tier, 4)
+    return {"Tier 1": 0, "Tier 2": 1, "Tier 3": 2}.get(tier, 3)
 
 
 @dataclass

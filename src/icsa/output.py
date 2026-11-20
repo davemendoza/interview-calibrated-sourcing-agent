@@ -59,11 +59,12 @@ def write_xlsx(candidates: list[Candidate], path: Path) -> None:
     ws = wb.active
     ws.title = "Leads"
     ws.append(LEAD_COLUMNS)
-    tier_fill = {"Tier 1": "DDEBF7", "Tier 2": "E2EFDA", "Identity review": "FCE4D6"}
+    tier_fill = {"Tier 1": "DDEBF7", "Tier 2": "E2EFDA"}
+    review_fill = "FCE4D6"
     for c in candidates:
         row = _row(c)
         ws.append([row[k] for k in LEAD_COLUMNS])
-        fill = tier_fill.get(c.tier)
+        fill = tier_fill.get(c.tier) or (review_fill if c.identity_status.startswith("review") else None)
         if fill:
             for cell in ws[ws.max_row]:
                 cell.fill = PatternFill("solid", fgColor=fill)

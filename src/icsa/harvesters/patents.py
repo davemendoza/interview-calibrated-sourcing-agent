@@ -1,6 +1,6 @@
 """USPTO patents via the free PatentsView PatentSearch API.
 
-Inventors on payments patents are pre-qualified by their own filed work, and
+Inventors on patents in your domain are pre-qualified by their own filed work, and
 the filing records the inventor's city.
 """
 

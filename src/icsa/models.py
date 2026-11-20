@@ -94,7 +94,7 @@ class Candidate:
     evidence: list[Evidence] = field(default_factory=list)
     identity_status: str = "single source"
     identity_notes: list[str] = field(default_factory=list)
-    tier: str = "Pending research"
+    tier: str = ""
     recommendation: str = ""
     tier_reasons: list[str] = field(default_factory=list)
     requirements: list[Check] = field(default_factory=list)

@@ -2,6 +2,8 @@
 
 **Open-web sourcing that learns from post-interview evaluations.**
 
+> **New to this, or not technical?** Start with the [plain-English guide for talent leaders](docs/GUIDE_FOR_TALENT_LEADERS.md). It walks you through running your own version in six steps, or having Claude set it up for you.
+
 Most sourcing tools re-rank the same LinkedIn profiles every other recruiter sees. This agent finds engineers by the work they have done in public, then calibrates what it looks for using the signals that actually decided interview outcomes.
 
 It started from a simple finding: when post-interview feedback for a Staff engineering loop was analyzed, candidates rarely failed the first question. They failed the follow-up. "What did you personally decide?" "What does the caller get when that payment call times out?" "How would you prove the AI output is correct?" Those deciding signals should be the first thing a sourcer looks for, and interview results should flow back into how leads are scored.
@@ -26,7 +28,7 @@ It started from a simple finding: when post-interview feedback for a Staff engin
 ```
 
 ### Stage 0: interview calibration
-Each role file lists the interview signals that decide outcomes, with search terms, a weight and a screen question. The example role uses five:
+Each role file lists the interview signals that decide outcomes, with search terms, a weight and a screen question. The fintech example role uses five (the template keeps the four generic ones and leaves room for your own):
 
 | Signal | What the interviewers listened for |
 |---|---|
@@ -102,6 +104,29 @@ crontab -e
 17 2 * * * cd $HOME/interview-calibrated-sourcing-agent && ./scripts/nightly.sh >> out/nightly.log 2>&1
 ```
 
+## Adapt it to your domain
+
+The engine is domain-neutral. Everything specific to a field lives in a role file, and every line you are expected to change is marked `>>> CUSTOMIZE`.
+
+| File | Use it for |
+|---|---|
+| `config/roles/TEMPLATE_role.toml` | Starting a new domain. Blank, with generic interview signals and every field to fill marked |
+| `config/roles/example_fintech_staff_payments_engineer.toml` | A complete worked example from fintech (payments vocabulary, seed repos, patent assignees) |
+
+What you can change without touching code:
+
+* **Labels people see**, in the `[labels]` table: the domain name used in messages ("No payments evidence found yet"), the tier words (Strong Recommend, Recommend, Pipeline depth), and the status words (Pending research, Identity review).
+* **Interview signals**: the follow-ups that decided your interviews, with search terms and a screen question.
+* **Requirements**: your domain vocabulary. The `domain` requirement decides whether a lead is scored at all.
+* **Sources**: seed repos, patent assignees, research institutions, conference events.
+
+If a `>>> CUSTOMIZE` field is left empty, the agent prints a plain-language warning and scores nobody rather than guessing.
+
+```bash
+cp config/roles/TEMPLATE_role.toml config/roles/my_role.toml
+icsa run --role config/roles/my_role.toml
+```
+
 ## Sources
 
 | Channel | Source | Key needed |
@@ -111,7 +136,7 @@ crontab -e
 | Papers | OpenAlex | None (email recommended) |
 | Talks | Sessionize public speaker JSON; agenda pages for verification only | None |
 
-Edit seed repos, patent assignees, institutions and events in the role file.
+Edit seed repos, patent assignees, institutions and events in your role file.
 
 ## Data and privacy
 
@@ -123,7 +148,8 @@ Edit seed repos, patent assignees, institutions and events in the role file.
 ## Project layout
 
 ```
-config/roles/          role files: interview signals, requirements, sources
+config/roles/          TEMPLATE_role.toml plus a fintech example; one file per role
+docs/                  plain-English guide for talent leaders
 src/icsa/harvesters/   github, patents, openalex, talks (parse functions are pure and tested)
 src/icsa/identity.py   identity gate
 src/icsa/scorer.py     fail-closed tiering

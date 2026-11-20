@@ -1,9 +1,29 @@
-# Example role: Staff Software Engineer, payments infrastructure.
-# Copy this file to calibrate a new role. Keep client names and private rules
-# in a copy under data/ (ignored by git) if they should not be public.
+# =============================================================================
+# EXAMPLE ROLE: FINTECH (Staff Software Engineer, payments infrastructure)
+# =============================================================================
+# This file is a worked example from fintech. Every line marked
+#   >>> CUSTOMIZE
+# holds fintech-specific language, terms or sources that you are expected to
+# replace for your own domain. Everything else is generic engine settings.
+#
+# To start a new domain, copy config/roles/TEMPLATE_role.toml instead; it has
+# the same structure with no domain content.
+#
+# Keep client names and private rules in a copy under data/ (ignored by git)
+# if they should not be public. Run with: icsa run --role <your file>
+# =============================================================================
+
+# >>> CUSTOMIZE: the words people see in results.
+[labels]
+domain_name = "payments"            # >>> CUSTOMIZE: your domain, e.g. "healthcare data", "robotics"
+tier1 = "Strong Recommend"
+tier2 = "Recommend"
+tier3 = "Pipeline depth"
+pending = "Pending research"        # shown when no domain evidence exists yet
+identity_review = "Identity review" # shown when same-name records are unconfirmed
 
 [role]
-title = "Staff Software Engineer, Payments Infrastructure"
+title = "Staff Software Engineer, Payments Infrastructure"  # >>> CUSTOMIZE
 # Leads outside these metros are kept but marked "location unconfirmed".
 metros = ["sf_bay", "nyc"]
 # Domain evidence older than this many years drops the lead one tier.
@@ -15,14 +35,14 @@ tier1_min_channels = 2
 tier1_min_commits = 75
 
 # ---------------------------------------------------------------------------
-# Stage 0: interview calibration.
+# Stage 0: interview calibration.   >>> CUSTOMIZE: signals, terms and questions
 # These are the signals that decided post-interview outcomes. The agent looks
 # for public evidence of each one before outreach. A signal with no evidence
 # becomes a screen question for that lead. `icsa recalibrate` adjusts weights
 # from data/outcomes.csv after each interview round.
 # ---------------------------------------------------------------------------
 
-[[interview_signals]]
+[[interview_signals]]   # >>> CUSTOMIZE: fintech-specific signal
 id = "money_state"
 label = "Money-state correctness: idempotency, unknown outcomes, timeouts, reconciliation"
 weight = 1.0
@@ -58,11 +78,12 @@ terms = ["llm", "machine learning", " ml ", "model", "agent", "copilot", "eval",
 screen_question = "Give me a concrete case where AI-generated output was wrong and how you caught it. What do you keep deterministic?"
 
 # ---------------------------------------------------------------------------
-# Role requirements. "domain" requirements decide whether a lead is scored at
+# Role requirements.   >>> CUSTOMIZE: terms are fintech vocabulary
+# "domain" requirements decide whether a lead is scored at
 # all (no domain evidence means Pending research, never a guessed tier).
 # ---------------------------------------------------------------------------
 
-[[requirements]]
+[[requirements]]   # >>> CUSTOMIZE: replace with your domain vocabulary
 id = "payments_domain"
 label = "Payments or banking domain work"
 kind = "domain"
@@ -76,12 +97,13 @@ terms = ["distributed", "kafka", "grpc", "microservice", "postgres", "database",
 
 [[requirements]]
 id = "adjacent_only"
-label = "Adjacent domain (counts toward Tier 3 only when no payments evidence exists)"
+label = "Adjacent domain (counts toward Tier 3 only when no domain evidence exists)"
 kind = "adjacent"
 terms = ["database internals", "storage engine", "query engine", "compiler"]
 
 # ---------------------------------------------------------------------------
-# Open-web sources. Edit freely. Everything here is public data.
+# Open-web sources.   >>> CUSTOMIZE: every seed below is fintech-specific
+# Everything here is public data.
 # ---------------------------------------------------------------------------
 
 [sources.github]

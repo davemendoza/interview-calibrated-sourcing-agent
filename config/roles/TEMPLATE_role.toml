@@ -1,0 +1,113 @@
+# =============================================================================
+# ROLE TEMPLATE: copy this file to start a new domain or role
+# =============================================================================
+#   cp config/roles/TEMPLATE_role.toml config/roles/my_role.toml
+#   icsa run --role config/roles/my_role.toml
+#
+# Fill in every line marked  >>> CUSTOMIZE.  The interview signals below are
+# generic to senior engineering roles and can be kept, edited or replaced.
+# See example_fintech_staff_payments_engineer.toml for a complete worked example.
+# The agent warns and scores nobody until the domain requirement has terms.
+# =============================================================================
+
+[labels]
+domain_name = ""                    # >>> CUSTOMIZE: e.g. "healthcare data", "robotics", "ad tech"
+tier1 = "Strong Recommend"          # optional: rename to your team's words
+tier2 = "Recommend"
+tier3 = "Pipeline depth"
+pending = "Pending research"
+identity_review = "Identity review"
+
+[role]
+title = ""                          # >>> CUSTOMIZE: the role you are sourcing
+metros = []                         # >>> CUSTOMIZE: any of "sf_bay", "nyc" (add more in src/icsa/config.py METROS)
+recency_years = 3
+tier1_min_channels = 2
+tier1_min_commits = 75
+
+# -----------------------------------------------------------------------------
+# Stage 0: interview calibration.   >>> CUSTOMIZE
+# Use the follow-up questions that actually decided your past interviews.
+# `icsa recalibrate` adjusts these weights from data/outcomes.csv.
+# -----------------------------------------------------------------------------
+
+# >>> CUSTOMIZE: add one domain-specific signal, the follow-up candidates most
+# often failed in your loop. Uncomment and fill in:
+# [[interview_signals]]
+# id = "domain_correctness"
+# label = ""
+# weight = 1.0
+# terms = []
+# screen_question = ""
+
+[[interview_signals]]
+id = "owned_decision"
+label = "One owned, defended technical decision with alternatives and a result"
+weight = 1.0
+terms = ["rfc", "design doc", "architecture decision", "adr", "proposal", "migrat", "rewrite", "deprecat", "tradeoff", "trade-off"]
+screen_question = "Tell me about one technical decision you personally made and defended. What were the alternatives, who disagreed, and what happened?"
+
+[[interview_signals]]
+id = "incident_to_prevention"
+label = "Incident told from detection to prevention"
+weight = 0.8
+terms = ["incident", "postmortem", "post-mortem", "outage", "on-call", "oncall", "slo", "sla", "root cause", "resilien"]
+screen_question = "Describe an incident you led from detection to prevention. What changed in the process, not just the code?"
+
+[[interview_signals]]
+id = "cross_team_influence"
+label = "Cross-team influence with a mechanism (contracts, reviews, shared libraries)"
+weight = 0.8
+terms = ["platform", "sdk", "framework", "library", "api contract", "schema", "maintainer", "core team", "standard", "spec"]
+screen_question = "How did you get another team to adopt something you built? What was the mechanism: a contract, a review, a shared library?"
+
+[[interview_signals]]
+id = "ai_with_verification"
+label = "AI use with a verification story"
+weight = 0.7
+terms = ["llm", "machine learning", " ml ", "agent", "copilot", "eval"]
+screen_question = "Give me a concrete case where AI-generated output was wrong and how you caught it. What do you keep deterministic?"
+
+# -----------------------------------------------------------------------------
+# Role requirements.   >>> CUSTOMIZE
+# kind = "domain"   decides whether a lead is scored at all
+# kind = "core"     general skills, shown as met / no evidence
+# kind = "adjacent" neighboring fields that count toward Tier 3 only
+# -----------------------------------------------------------------------------
+
+[[requirements]]
+id = "domain"
+label = ""                          # >>> CUSTOMIZE: e.g. "Clinical data systems work"
+kind = "domain"
+terms = []                          # >>> CUSTOMIZE: your domain vocabulary, lowercase
+
+[[requirements]]
+id = "backend_scale"
+label = "Backend systems at scale"
+kind = "core"
+terms = ["distributed", "kafka", "grpc", "microservice", "postgres", "database", "throughput", "latency", "event", "stream", "queue"]
+
+# -----------------------------------------------------------------------------
+# Open-web sources.   >>> CUSTOMIZE: all public data; remove a table to skip it
+# -----------------------------------------------------------------------------
+
+[sources.github]
+repos = []                          # >>> CUSTOMIZE: "owner/repo" for repos central to your domain
+min_contributions = 10
+max_contributors_per_repo = 60
+
+[sources.patents]
+endpoint = "https://search.patentsview.org/api/v1/patent/"
+assignees = []                      # >>> CUSTOMIZE: companies exactly as spelled on USPTO filings
+since = "2021-01-01"
+max_per_assignee = 300
+
+[sources.openalex]
+institutions = []                   # >>> CUSTOMIZE: companies or labs that publish in your domain
+topics = []                         # >>> CUSTOMIZE: research topics
+since = "2019-01-01"
+max_per_query = 50
+
+[sources.talks]
+sessionize_ids = []                 # >>> CUSTOMIZE: Sessionize event IDs for your domain's conferences
+pages = []                          # >>> CUSTOMIZE: speaker pages (verification only)

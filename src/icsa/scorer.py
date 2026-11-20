@@ -4,21 +4,27 @@ Rules, each traceable to a lesson from tiered test candidates:
   * Evidence follows the person, not their current employer.
   * Domain evidence older than `recency_years` drops the lead one tier.
   * Talk-only evidence caps at Tier 3. Patent-only evidence caps at Tier 2.
-  * Adjacent-domain work with no payments evidence is Tier 3 at most.
+  * Adjacent-domain work with no domain evidence is Tier 3 at most.
+
+All wording shown to people (labels, the domain name) comes from the role
+file's [labels] table, so the scorer itself is domain-neutral.
   * Unresolved namesakes get no tier until a person confirms identity.
 """
 
 from __future__ import annotations
 
-from .config import metro_of
+from .config import DEFAULT_LABELS, metro_of
 from .models import STRONG_CHANNELS, Candidate, Check, Evidence, today_year
 
-RECOMMENDATION = {
-    "Tier 1": "Strong Recommend",
-    "Tier 2": "Recommend",
-    "Tier 3": "Pipeline depth",
-}
 TIERS = ["Tier 1", "Tier 2", "Tier 3"]
+
+
+def _labels(role: dict) -> dict:
+    return {**DEFAULT_LABELS, **role.get("labels", {})}
+
+
+def _recommendation(tier: str, labels: dict) -> str:
+    return {"Tier 1": labels["tier1"], "Tier 2": labels["tier2"], "Tier 3": labels["tier3"]}.get(tier, "")
 
 
 def _matches(e: Evidence, terms: list[str]) -> bool:
@@ -42,6 +48,8 @@ def _drop(tier: str) -> str:
 
 def score(c: Candidate, role: dict) -> Candidate:
     cfg = role.get("role", {})
+    labels = _labels(role)
+    domain_name = labels["domain_name"]
     recency = int(cfg.get("recency_years", 3))
 
     c.requirements = [_check(r, c.evidence, recency) for r in role.get("requirements", [])]
@@ -63,17 +71,17 @@ def score(c: Candidate, role: dict) -> Candidate:
     domain_ev = [e for e in c.evidence if _matches(e, domain_terms)]
 
     if c.identity_status.startswith("review"):
-        c.tier, c.recommendation = "Identity review", ""
+        c.tier, c.recommendation = labels["identity_review"], ""
         c.tier_reasons = ["Same name as another record with no second matching signal; confirm before scoring"]
         return c
 
     if not domain_ev:
         if any(chk.status != "no evidence" for chk in adjacent):
-            c.tier, c.recommendation = "Tier 3", RECOMMENDATION["Tier 3"]
-            c.tier_reasons = ["Adjacent-domain work only; no payments evidence"]
+            c.tier, c.recommendation = "Tier 3", labels["tier3"]
+            c.tier_reasons = [f"Adjacent-domain work only; no {domain_name} evidence"]
         else:
-            c.tier, c.recommendation = "Pending research", ""
-            c.tier_reasons = ["No domain evidence found yet; not scored"]
+            c.tier, c.recommendation = labels["pending"], ""
+            c.tier_reasons = [f"No {domain_name} evidence found yet; not scored"]
         return c
 
     channels = {e.channel for e in domain_ev}
@@ -87,10 +95,10 @@ def score(c: Candidate, role: dict) -> Candidate:
         reasons.append("Talk evidence only; caps at Tier 3")
     elif len(channels) >= min_channels or commits >= min_commits:
         tier = "Tier 1"
-        reasons.append(f"Domain evidence across {', '.join(sorted(channels))}" + (f"; {commits} commits" if commits else ""))
+        reasons.append(f"{domain_name.capitalize()} evidence across {', '.join(sorted(channels))}" + (f"; {commits} commits" if commits else ""))
     else:
         tier = "Tier 2"
-        reasons.append(f"Domain evidence from one channel ({', '.join(sorted(channels))})")
+        reasons.append(f"{domain_name.capitalize()} evidence from one channel ({', '.join(sorted(channels))})")
 
     if channels == {"patent"} and tier == "Tier 1":
         tier = "Tier 2"
@@ -99,7 +107,7 @@ def score(c: Candidate, role: dict) -> Candidate:
     if any(chk.status == "not met (aged)" for chk in domain):
         last = max((chk.last_seen for chk in domain if chk.last_seen), default="unknown")
         tier = _drop(tier)
-        reasons.append(f"Domain evidence last seen {last[:4] if last else 'unknown'}; dropped one tier")
+        reasons.append(f"{domain_name.capitalize()} evidence last seen {last[:4] if last else 'unknown'}; dropped one tier")
 
     metros = {metro_of(e.location) for e in c.evidence if e.location}
     wanted = set(cfg.get("metros", []))
@@ -109,11 +117,12 @@ def score(c: Candidate, role: dict) -> Candidate:
     if c.identity_status == "verified":
         reasons.append("Identity confirmed by two independent signals")
 
-    c.tier, c.recommendation, c.tier_reasons = tier, RECOMMENDATION[tier], reasons
+    c.tier, c.recommendation, c.tier_reasons = tier, _recommendation(tier, labels), reasons
     return c
 
 
 def score_all(candidates: list[Candidate], role: dict) -> list[Candidate]:
-    order = {t: i for i, t in enumerate(TIERS + ["Identity review", "Pending research"])}
+    labels = _labels(role)
+    order = {t: i for i, t in enumerate(TIERS + [labels["identity_review"], labels["pending"]])}
     scored = [score(c, role) for c in candidates]
     return sorted(scored, key=lambda c: (order.get(c.tier, 9), -c.signal_score, c.name))

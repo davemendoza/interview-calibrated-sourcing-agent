@@ -29,7 +29,7 @@ def main(argv: list[str] | None = None) -> int:
     sub = p.add_subparsers(dest="cmd", required=True)
 
     def role_arg(sp):
-        sp.add_argument("--role", default="config/roles/staff_payments_engineer.toml")
+        sp.add_argument("--role", default="config/roles/example_fintech_staff_payments_engineer.toml")
 
     h = sub.add_parser("harvest", help="collect public evidence")
     role_arg(h)
