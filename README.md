@@ -179,4 +179,8 @@ tests/                 fictional fixtures only
 * Job-change monitoring for Tier 1 leads
 * Trajectory scoring: how fast someone's scope is rising, not only where it is today
 
+## License
+
+MIT. Use it, adapt it to your own domain, and share it; keep the copyright notice. See [LICENSE](LICENSE).
+
 Built by Dave Mendoza, Talent Engine.
