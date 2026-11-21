@@ -10,7 +10,8 @@ from pathlib import Path
 
 from . import evaluate as ev
 from . import judge as judge_mod
-from . import pipeline, recalibrate
+from . import ecosystem as eco
+from . import pipeline, recalibrate, taxonomy
 from .config import load_role
 
 WORKBOOK = Path("data/calibration_workbook.xlsx")
@@ -71,7 +72,48 @@ def main(argv: list[str] | None = None) -> int:
     c.add_argument("--matrix", default="out/signal_matrix.csv")
     c.add_argument("--save", default="data/calibration.json")
 
+    m = sub.add_parser("ecosystem", help="show ecosystem coverage by category and what is missing")
+    role_arg(m)
+
+    t = sub.add_parser("taxonomy", help="read taxonomy pages and suggest domain terms you are missing")
+    role_arg(t)
+    t.add_argument("--top", type=int, default=40)
+
     a = p.parse_args(argv)
+
+    if a.cmd == "ecosystem":
+        role = load_role(a.role, calibration=None)
+        rows = eco.coverage(role)
+        print(f"Ecosystem coverage for: {role['role'].get('title') or a.role}\n")
+        print(f"{'Category':<13}{'Entries':<9}{'Uses':<28}What it can support")
+        for cat, n, uses, guide in rows:
+            print(f"{cat:<13}{n:<9}{(uses or '-'):<28}{guide}")
+        missing = [cat for cat, n, _, _ in rows if n == 0 and cat != "other"]
+        if missing:
+            print("\nNo entries yet for: " + ", ".join(missing))
+            print("See docs/BUILD_YOUR_ECOSYSTEM.md for a prompt that fills these in for your job family.")
+        return 0
+
+    if a.cmd == "taxonomy":
+        from bs4 import BeautifulSoup
+        from .http import Http
+        role = load_role(a.role, calibration=None)
+        pages = role.get("taxonomy_pages", [])
+        if not pages:
+            print("No taxonomy pages yet. Add [[ecosystem]] entries with use = \"taxonomy\" to your role file.")
+            return 1
+        http, texts = Http(), {}
+        for url in pages:
+            try:
+                texts[url] = BeautifulSoup(http.get_text(url), "html.parser").get_text(" ")
+            except Exception as exc:
+                print(f"[taxonomy] skipped {url}: {exc}", file=sys.stderr)
+        suggestions = taxonomy.suggest_terms(texts, taxonomy.role_terms(role), a.top)
+        print(f"Read {len(texts)} of {len(pages)} pages. Phrases your role file does not cover yet:\n")
+        for phrase, count, urls in suggestions:
+            print(f"  {phrase:<40} seen {count}x on {len(urls)} page(s)")
+        print("\nReview these, then copy the ones that mark real work in your field into the domain requirement's terms.")
+        return 0
 
     if a.cmd == "harvest":
         n = pipeline.harvest(load_role(a.role), Path(a.evidence), a.only)

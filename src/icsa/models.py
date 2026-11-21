@@ -26,6 +26,19 @@ def normalize_name(name: str) -> str:
     return " ".join(parts)
 
 
+NON_PERSON_WORDS = ("inc", "llc", "ltd", "corp", "team", "staff", "editors", "editorial", "engineering",
+                    "blog", "contributors", "community", "official", "newsroom", "admin")
+
+
+def looks_like_person(name: str | None) -> bool:
+    """A byline or author field that names a person, not a company, team or blog."""
+    name = (name or "").strip()
+    if not name or " " not in name or len(name) > 60:
+        return False
+    words = re.findall(r"[a-z]+", name.lower())
+    return not any(w in NON_PERSON_WORDS for w in words)
+
+
 def normalize_org(org: str | None) -> str:
     if not org:
         return ""

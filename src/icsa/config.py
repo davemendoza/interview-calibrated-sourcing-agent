@@ -38,7 +38,9 @@ def load_role(path: str | Path, calibration: str | Path | None = DEFAULT_CALIBRA
     role.setdefault("requirements", [])
     role.setdefault("interview_signals", [])
     role.setdefault("sources", {})
-    for problem in check_role(role):
+    from . import ecosystem  # local import keeps config importable on its own
+    ecosystem.apply(role)
+    for problem in check_role(role) + ecosystem.check(role):
         print(f"[role file] {problem}", file=sys.stderr)
     if calibration and Path(calibration).exists():
         weights = json.loads(Path(calibration).read_text()).get("weights", {})

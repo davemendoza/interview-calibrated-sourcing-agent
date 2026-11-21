@@ -101,49 +101,249 @@ label = "Adjacent domain (counts toward Tier 3 only when no domain evidence exis
 kind = "adjacent"
 terms = ["database internals", "storage engine", "query engine", "compiler"]
 
-# ---------------------------------------------------------------------------
-# Open-web sources.   >>> CUSTOMIZE: every seed below is fintech-specific
-# Everything here is public data.
-# ---------------------------------------------------------------------------
+# =============================================================================
+# THE TALENT ECOSYSTEM MAP   >>> CUSTOMIZE: every entry below is fintech payments
+# =============================================================================
+# One [[ecosystem]] entry per place where Staff payments engineers leave
+# evidence. `use` tells the agent what the source can honestly support:
+#   harvest   finds new leads (needs `source` and `value`)
+#   verify    confirms people already found (speaker, meetup, working-group pages)
+#   taxonomy  teaches the agent the field's vocabulary (run `icsa taxonomy`)
+# Run `icsa ecosystem` to see coverage by category and what is missing.
+# Every URL below was checked on Nov 20, 2026. Check again before relying on it.
+# See docs/BUILD_YOUR_ECOSYSTEM.md for the full guide and a prompt that builds
+# this section for any job family.
 
+# ---- Code: contributors to repos central to payments engineering ----
+[[ecosystem]]
+category = "code"
+name = "Moov ACH library"
+use = "harvest"
+source = "github_repo"
+value = "moov-io/ach"
+
+[[ecosystem]]
+category = "code"
+name = "Moov Watchman (sanctions screening)"
+use = "harvest"
+source = "github_repo"
+value = "moov-io/watchman"
+
+[[ecosystem]]
+category = "code"
+name = "Cash App Misk service framework"
+use = "harvest"
+source = "github_repo"
+value = "cashapp/misk"
+
+[[ecosystem]]
+category = "code"
+name = "Stripe Go client"
+use = "harvest"
+source = "github_repo"
+value = "stripe/stripe-go"
+
+[[ecosystem]]
+category = "code"
+name = "Stripe Java client"
+use = "harvest"
+source = "github_repo"
+value = "stripe/stripe-java"
+
+[[ecosystem]]
+category = "code"
+name = "Formance ledger"
+use = "harvest"
+source = "github_repo"
+value = "formancehq/ledger"
+
+[[ecosystem]]
+category = "code"
+name = "TigerBeetle financial transactions database"
+use = "harvest"
+source = "github_repo"
+value = "tigerbeetle/tigerbeetle"
+
+[[ecosystem]]
+category = "code"
+name = "Adyen Java API library"
+use = "harvest"
+source = "github_repo"
+value = "adyen/adyen-java-api-library"
+
+[[ecosystem]]
+category = "code"
+name = "Plaid Python client"
+use = "harvest"
+source = "github_repo"
+value = "plaid/plaid-python"
+
+# ---- Patents: inventors on filings from payments and fintech companies ----
+[[ecosystem]]
+category = "patents"
+name = "Stripe patents"
+use = "harvest"
+source = "patent_assignee"
+value = "Stripe, Inc."
+
+[[ecosystem]]
+category = "patents"
+name = "Plaid patents"
+use = "harvest"
+source = "patent_assignee"
+value = "Plaid Inc."
+
+[[ecosystem]]
+category = "patents"
+name = "Block patents"
+use = "harvest"
+source = "patent_assignee"
+value = "Block, Inc."
+
+[[ecosystem]]
+category = "patents"
+name = "Square patents (pre-rename filings)"
+use = "harvest"
+source = "patent_assignee"
+value = "Square, Inc."
+
+[[ecosystem]]
+category = "patents"
+name = "Chime patents"
+use = "harvest"
+source = "patent_assignee"
+value = "Chime Financial, Inc."
+
+[[ecosystem]]
+category = "patents"
+name = "Affirm patents"
+use = "harvest"
+source = "patent_assignee"
+value = "Affirm, Inc."
+
+[[ecosystem]]
+category = "patents"
+name = "Brex patents"
+use = "harvest"
+source = "patent_assignee"
+value = "Brex Inc."
+
+[[ecosystem]]
+category = "patents"
+name = "Coinbase patents"
+use = "harvest"
+source = "patent_assignee"
+value = "Coinbase, Inc."
+
+# ---- Research: authors from institutions that publish payments work ----
+[[ecosystem]]
+category = "research"
+name = "Stripe research authors"
+use = "harvest"
+source = "openalex_institution"
+value = "Stripe"
+
+[[ecosystem]]
+category = "research"
+name = "Block research authors"
+use = "harvest"
+source = "openalex_institution"
+value = "Block (United States)"
+
+[[ecosystem]]
+category = "research"
+name = "Plaid research authors"
+use = "harvest"
+source = "openalex_institution"
+value = "Plaid"
+
+# ---- Engineering blogs ----
+# A feed creates leads only if its posts name their authors.
+[[ecosystem]]
+category = "blogs"
+name = "Cash App engineering blog"
+use = "harvest"
+source = "rss"
+value = "https://code.cash.app/feed.xml"
+org = "Block"
+notes = "Atom feed; every post names its author"
+
+[[ecosystem]]
+category = "blogs"
+name = "Stripe blog"
+use = "taxonomy"
+url = "https://stripe.com/blog/feed.rss"
+notes = "Feed has no author names, so it teaches vocabulary instead of creating leads"
+
+# ---- Standards and rule books: the field's vocabulary ----
+[[ecosystem]]
+category = "standards"
+name = "Nacha Operating Rules updates"
+use = "taxonomy"
+url = "https://www.nacha.org/rules"
+
+[[ecosystem]]
+category = "standards"
+name = "FedNow Service"
+use = "taxonomy"
+url = "https://www.frbservices.org/financial-services/fednow"
+
+# >>> CUSTOMIZE: add ISO 20022 message definitions and the RTP network pages
+# after checking their current URLs.
+
+# ---- Associations: vocabulary and verification, never lead lists ----
+[[ecosystem]]
+category = "associations"
+name = "U.S. Faster Payments Council"
+use = "taxonomy"
+url = "https://fasterpaymentscouncil.org"
+notes = "Work groups are public; member list is members-only"
+
+[[ecosystem]]
+category = "associations"
+name = "Financial Data Exchange (FDX)"
+use = "taxonomy"
+url = "https://financialdataexchange.org"
+notes = "Open banking API standard; working groups are members-only"
+
+# ---- Conferences ----
+[[ecosystem]]
+category = "conferences"
+name = "Fintech DevCon"
+use = "verify"
+url = "https://fintechdevcon.io"
+notes = "Developer conference for fintech. Speakers are listed per event and in the video archive; add the speaker page for each year"
+
+# >>> CUSTOMIZE: add Sessionize event ids (source = "sessionize") for
+# engineering conferences that publish on Sessionize, and verify-pages for
+# Money20/20, Nacha's Smarter Faster Payments, QCon and Kafka or Postgres
+# conferences. Big payments shows skew toward executives; engineering and
+# infrastructure conferences surface more Staff-level speakers.
+
+# ---- Meetups ----
+# >>> CUSTOMIZE: add past-event speaker pages (use = "verify") for payments,
+# fintech and infrastructure meetups in your target metros. Repeat speakers
+# and organizers are strong signals.
+
+# ---- Package registries ----
+# >>> CUSTOMIZE: add independently maintained payments, ACH or ISO 20022
+# libraries (source = "pypi" or "npm"). Company SDKs list the company as
+# author and create no leads.
+
+# Harvester tuning (ecosystem entries supply the seeds above).
 [sources.github]
-# Repos whose contributors are harvested. Format: owner/repo
-repos = [
-  "moov-io/ach",
-  "moov-io/watchman",
-  "cashapp/misk",
-  "stripe/stripe-go",
-  "stripe/stripe-java",
-  "formancehq/ledger",
-  "tigerbeetle/tigerbeetle",
-  "adyen/adyen-java-api-library",
-  "plaid/plaid-python",
-]
-# Ignore drive-by contributors.
 min_contributions = 10
-# Cap per repo to protect your API quota.
 max_contributors_per_repo = 60
 
 [sources.patents]
-# PatentsView PatentSearch API. Assignee names must match USPTO spelling.
 endpoint = "https://search.patentsview.org/api/v1/patent/"
-assignees = ["Stripe, Inc.", "Plaid Inc.", "Block, Inc.", "Square, Inc.", "Chime Financial, Inc.", "Affirm, Inc.", "Brex Inc.", "Coinbase, Inc."]
 since = "2021-01-01"
 max_per_assignee = 300
 
 [sources.openalex]
-institutions = ["Stripe", "Block (United States)", "Plaid"]
 topics = ["payments", "ledger", "fraud detection", "distributed transactions"]
 since = "2019-01-01"
 max_per_query = 50
-
-[sources.talks]
-# Sessionize event IDs (the part after sessionize.com/api/v2/ in an event's
-# public API link). Add IDs for engineering conferences and meetups you trust.
-sessionize_ids = []
-# Speaker or agenda pages. These are used to verify talks by people already
-# found elsewhere, never to create a lead from a name alone.
-pages = []
 
 # ---------------------------------------------------------------------------
 # Optional AI judgment step. After the keyword rules flag a possible signal,

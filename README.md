@@ -19,13 +19,15 @@ It started from a simple finding: when post-interview feedback for a Staff engin
 Two pages explain the parts most people ask about:
 * [How the agent learns who succeeds](docs/HOW_THE_AGENT_LEARNS.md): the calibration workbook, the test gate, and how interview outcomes reweight signals.
 * [Plain-English guide for talent leaders](docs/GUIDE_FOR_TALENT_LEADERS.md)
+* [Build your ecosystem map](docs/BUILD_YOUR_ECOSYSTEM.md): where your job family leaves evidence, plus a prompt that drafts the map for any JD
 
 ![How the agent learns who succeeds](docs/images/learning-loop.png)
 
 ```
  Stage 0  Interview calibration    signals that decided past interviews, with weights
     |
- Stage 1  Harvest open web         GitHub commits, USPTO patents, OpenAlex papers, conference talks
+ Stage 1  Harvest the ecosystem    code, patents, papers, engineering blogs, packages, conference talks
+          (taxonomy first)         standards and blog pages teach the agent the field's vocabulary
     |
  Stage 2  Identity gate            never merge on name alone; two independent signals required
     |
@@ -159,16 +161,33 @@ cp config/roles/TEMPLATE_role.toml config/roles/my_role.toml
 icsa run --role config/roles/my_role.toml
 ```
 
-## Sources
+## The ecosystem map
+
+The agent only searches where you point it. Each role file has an **ecosystem map**: one `[[ecosystem]]` entry per place where people in the job family leave public evidence, tagged with how the agent may use it.
+
+| Use | What it does |
+|---|---|
+| `harvest` | Finds new leads (GitHub repos, patent assignees, research institutions, Sessionize events, blog feeds that name authors, PyPI and npm packages) |
+| `verify` | Confirms people already found (speaker, meetup and working-group pages). A name on a page never creates a lead by itself |
+| `taxonomy` | Teaches the agent the field's vocabulary (rule books, standards, blogs without bylines). `icsa taxonomy` suggests terms you are missing |
+
+```bash
+icsa ecosystem     # coverage by category, and which categories are still empty
+icsa taxonomy      # recurring phrases from your taxonomy pages that your role file doesn't cover yet
+```
+
+The fintech example maps code, patents, research, blogs, conferences, associations and standards for Staff payments engineers, with every URL checked. Meetups and packages are left for you to add, and `icsa ecosystem` says so. To build a map for your own job family, use [Build your ecosystem map](docs/BUILD_YOUR_ECOSYSTEM.md): a two-step method (company landscape, then each market's public footprint) and a copy-paste prompt for Claude.
+
+## Sources and keys
 
 | Channel | Source | Key needed |
 |---|---|---|
-| Commits | GitHub REST API, contributors to seed repos | Personal token (free) |
+| Code | GitHub REST API, contributors to mapped repos | Personal token (free) |
 | Patents | PatentsView PatentSearch API (USPTO) | Free key |
 | Papers | OpenAlex | None (email recommended) |
-| Talks | Sessionize public speaker JSON; agenda pages for verification only | None |
-
-Edit seed repos, patent assignees, institutions and events in your role file.
+| Blogs | RSS and Atom feeds that name authors | None |
+| Packages | PyPI and npm registry APIs | None |
+| Talks | Sessionize public speaker JSON; other pages verify only | None |
 
 ## Data and privacy
 
@@ -188,6 +207,8 @@ src/icsa/harvesters/   github, patents, openalex, talks (parse functions are pur
 src/icsa/identity.py   identity gate
 src/icsa/scorer.py     fail-closed tiering
 src/icsa/judge.py      optional AI judgment step with quote verification
+src/icsa/ecosystem.py  the ecosystem map: harvest, verify and taxonomy entries
+src/icsa/taxonomy.py   suggests domain terms from taxonomy pages
 src/icsa/evaluate.py   test gate against your tiered test set
 src/icsa/recalibrate.py  learning from interview outcomes
 tests/                 fictional fixtures only
@@ -195,7 +216,7 @@ tests/                 fictional fixtures only
 
 ## Roadmap
 
-* Engineering blog bylines and package-registry maintainers as harvesters
+* An agent step that proposes new ecosystem entries from its best leads, for a person to approve
 * Richer text for the AI judge (README files, design docs, talk abstracts)
 * A skeptic pass that tries to disprove each Tier 1 before a person sees it
 * Job-change monitoring for Tier 1 leads

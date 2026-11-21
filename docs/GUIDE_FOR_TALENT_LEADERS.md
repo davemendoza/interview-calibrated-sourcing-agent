@@ -103,6 +103,8 @@ The last line opens your role file. Every line marked **>>> CUSTOMIZE** is somet
 
 **Your GitHub key:** sign in at github.com, open Settings, then Developer settings, then Personal access tokens, then Tokens (classic). Choose **Generate new token**, tick nothing, and create it. Copy the token, run `open .env`, and paste it after `GITHUB_TOKEN=`. Save the file.
 
+**Your ecosystem map (the most important part):** the role file has a section called "YOUR TALENT ECOSYSTEM MAP." It lists where people in your job family leave public evidence: code, patents, research, blogs, conferences, meetups, associations, standards and packages. The agent only searches the places listed there. The easiest way to fill it in is the ready-made prompt in [Build your ecosystem map](BUILD_YOUR_ECOSYSTEM.md): paste it into Claude with your job description, check every link it gives you, and paste the result in. Then run `icsa ecosystem` to see which categories are still empty.
+
 Move your Step 2 spreadsheet into the `data` folder inside `sourcing-agent`.
 
 ## Step 4: Run it
@@ -169,7 +171,8 @@ The agent will tell you which signals mattered most, and it will weigh them more
 | `[github] skipped: ... rate limit` | GitHub needs a short rest | Wait an hour, or check your token in `.env` |
 | `[patents] skipped: PATENTSVIEW_API_KEY is not set` | Patent search is off | Optional. Request a free key on patentsview.org and add it to `.env` |
 | `[role file] ... is empty` | A **>>> CUSTOMIZE** line is not filled in | Open your role file and fill it in |
-| Everyone shows Pending research | The agent does not know your field's words yet | Add more words to the `domain` requirement in your role file |
+| Everyone shows Pending research | The agent does not know your field's words yet | Run `icsa taxonomy` and add the useful suggested words to the `domain` requirement in your role file |
+| Very few leads at all | Your ecosystem map is thin | Run `icsa ecosystem`, then fill the empty categories using [Build your ecosystem map](BUILD_YOUR_ECOSYSTEM.md) |
 
 ## Ground rules that keep you safe
 

@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 from . import identity, output, scorer
-from .harvesters import github, openalex, patents, talks
+from .harvesters import blogs, github, openalex, packages, patents, talks
 from .models import Evidence
 
 HARVESTERS = {
@@ -15,6 +15,8 @@ HARVESTERS = {
     "patents": patents.harvest,
     "openalex": openalex.harvest,
     "talks": talks.harvest,
+    "blogs": blogs.harvest,
+    "packages": packages.harvest,
 }
 
 

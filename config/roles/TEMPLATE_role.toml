@@ -87,30 +87,132 @@ label = "Backend systems at scale"
 kind = "core"
 terms = ["distributed", "kafka", "grpc", "microservice", "postgres", "database", "throughput", "latency", "event", "stream", "queue"]
 
-# -----------------------------------------------------------------------------
-# Open-web sources.   >>> CUSTOMIZE: all public data; remove a table to skip it
-# -----------------------------------------------------------------------------
+# =============================================================================
+# YOUR TALENT ECOSYSTEM MAP   >>> CUSTOMIZE: this is what makes the agent work
+# =============================================================================
+# The agent only searches where you point it. Add one [[ecosystem]] entry for
+# each place where people in your job family leave public evidence of their
+# work. Aim for every category below; `icsa ecosystem` shows what is missing.
+#
+# Fastest route: paste the prompt in docs/BUILD_YOUR_ECOSYSTEM.md into Claude
+# with your job description, and it will draft these entries for you.
+#
+# Every entry has:
+#   category  code | patents | research | blogs | conferences | meetups |
+#             associations | standards | packages | other
+#   name      a label you will recognize
+#   use       harvest  = find new leads here (needs source and value)
+#             verify   = a page that confirms people found elsewhere (needs url)
+#             taxonomy = a page that teaches the field's vocabulary (needs url)
+#   source    for harvest only: github_repo | patent_assignee |
+#             openalex_institution | sessionize | rss | pypi | npm
+#   value     for harvest only: owner/repo, company as spelled on patents,
+#             institution name, Sessionize event id, feed URL, or package name
+#   url       for verify and taxonomy: the full web address
+#   org       optional: the employer behind a blog feed (helps identity checks)
+#   notes     optional: anything a teammate should know
+#
+# Rules that keep results trustworthy:
+#   * Only add URLs you have opened yourself. Never guess an address.
+#   * A blog feed creates leads only if its posts name their authors;
+#     otherwise mark it taxonomy.
+#   * Association member lists are rarely public: use them for taxonomy and
+#     verification, never as lead lists.
+#   * Big industry shows skew toward executives; engineering conferences and
+#     meetups surface more individual contributors.
+#
+# Copy any example below, uncomment it (remove the leading "# "), and fill it in.
 
+# ---- Code ----
+# [[ecosystem]]
+# category = "code"
+# name = ""
+# use = "harvest"
+# source = "github_repo"
+# value = ""            # owner/repo
+
+# ---- Patents ----
+# [[ecosystem]]
+# category = "patents"
+# name = ""
+# use = "harvest"
+# source = "patent_assignee"
+# value = ""            # company exactly as spelled on USPTO filings
+
+# ---- Research ----
+# [[ecosystem]]
+# category = "research"
+# name = ""
+# use = "harvest"
+# source = "openalex_institution"
+# value = ""            # institution name as OpenAlex lists it
+
+# ---- Engineering blogs ----
+# [[ecosystem]]
+# category = "blogs"
+# name = ""
+# use = "harvest"       # or "taxonomy" if the feed has no author names
+# source = "rss"
+# value = ""            # RSS or Atom feed URL
+# org = ""              # employer behind the blog
+
+# ---- Conferences ----
+# [[ecosystem]]
+# category = "conferences"
+# name = ""
+# use = "harvest"
+# source = "sessionize"
+# value = ""            # Sessionize event id
+#
+# [[ecosystem]]
+# category = "conferences"
+# name = ""
+# use = "verify"
+# url = ""              # speaker or agenda page
+
+# ---- Meetups ----
+# [[ecosystem]]
+# category = "meetups"
+# name = ""
+# use = "verify"
+# url = ""              # past-event speaker page
+
+# ---- Associations ----
+# [[ecosystem]]
+# category = "associations"
+# name = ""
+# use = "taxonomy"      # or "verify" for public speaker or working-group pages
+# url = ""
+
+# ---- Standards and rule books ----
+# [[ecosystem]]
+# category = "standards"
+# name = ""
+# use = "taxonomy"
+# url = ""
+
+# ---- Package registries ----
+# [[ecosystem]]
+# category = "packages"
+# name = ""
+# use = "harvest"
+# source = "pypi"       # or "npm"
+# value = ""            # package name
+
+# Harvester tuning (the ecosystem entries supply the seeds).
 [sources.github]
-repos = []                          # >>> CUSTOMIZE: "owner/repo" for repos central to your domain
 min_contributions = 10
 max_contributors_per_repo = 60
 
 [sources.patents]
 endpoint = "https://search.patentsview.org/api/v1/patent/"
-assignees = []                      # >>> CUSTOMIZE: companies exactly as spelled on USPTO filings
 since = "2021-01-01"
 max_per_assignee = 300
 
 [sources.openalex]
-institutions = []                   # >>> CUSTOMIZE: companies or labs that publish in your domain
-topics = []                         # >>> CUSTOMIZE: research topics
+topics = []                         # >>> CUSTOMIZE: research topics for your field
 since = "2019-01-01"
 max_per_query = 50
-
-[sources.talks]
-sessionize_ids = []                 # >>> CUSTOMIZE: Sessionize event IDs for your domain's conferences
-pages = []                          # >>> CUSTOMIZE: speaker pages (verification only)
 
 # ---------------------------------------------------------------------------
 # Optional AI judgment step. After the keyword rules flag a possible signal,
