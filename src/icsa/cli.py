@@ -79,7 +79,29 @@ def main(argv: list[str] | None = None) -> int:
     role_arg(t)
     t.add_argument("--top", type=int, default=40)
 
+    g = sub.add_parser("guard", help="scan resumes, PDFs, Word and HTML files for hidden or instructing text")
+    g.add_argument("paths", nargs="+", help="files or folders (.pdf .docx .html .txt)")
+    g.add_argument("--strict", action="store_true", help="also fail on medium findings")
+
     a = p.parse_args(argv)
+
+    if a.cmd == "guard":
+        from . import guard
+        files = []
+        for raw in a.paths:
+            path = Path(raw)
+            files += sorted(f for f in path.rglob("*") if f.suffix.lower() in (".pdf", ".docx", ".html", ".htm", ".txt")) if path.is_dir() else [path]
+        worst = 0
+        for f in files:
+            rep = guard.scan_file(f)
+            status = "HOLD" if rep.blocked else ("REVIEW" if rep.findings else "clean")
+            print(f"{status:<7}{f}")
+            for finding in rep.findings:
+                print(f"        {finding.line()}")
+            if rep.blocked or (a.strict and rep.worst == guard.MEDIUM):
+                worst = 1
+        print(f"\nScanned {len(files)} file(s). HOLD means do not feed it to any scorer or AI until a person has looked.")
+        return worst
 
     if a.cmd == "ecosystem":
         role = load_role(a.role, calibration=None)

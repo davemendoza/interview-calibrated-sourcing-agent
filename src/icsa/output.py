@@ -11,7 +11,7 @@ from .models import Candidate
 LEAD_COLUMNS = [
     "Tier", "Recommendation", "Name", "Company", "Location", "Identity", "Interview signal score",
     "Matched requirements", "Signals with evidence", "AI judge notes", "Key evidence", "Latest evidence", "GitHub",
-    "Self-published links", "Self-published email", "Sources", "Tier reasons",
+    "Self-published links", "Self-published email", "Sources", "Tier reasons", "Integrity",
 ]
 
 
@@ -40,6 +40,7 @@ def _row(c: Candidate) -> dict:
         "Self-published email": c.best("email") or "",
         "Sources": " ".join(c.sources),
         "Tier reasons": "; ".join(c.tier_reasons),
+        "Integrity": " | ".join(c.integrity_flags) or "No hidden or instructing text found",
     }
 
 
@@ -103,3 +104,13 @@ def write_xlsx(candidates: list[Candidate], path: Path) -> None:
                 c.alignment = Alignment(vertical="top", wrap_text=width >= 60)
     path.parent.mkdir(parents=True, exist_ok=True)
     wb.save(path)
+
+
+def write_integrity(held: list, path: Path) -> None:
+    """One row per evidence item the guard held back, with the exact reason."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["Name", "Channel", "Evidence", "Source", "Why it was held back"])
+        for h in held:
+            w.writerow([h.evidence.person_name, h.evidence.channel, h.evidence.title, h.evidence.url, " | ".join(h.reasons)])

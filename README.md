@@ -20,6 +20,9 @@ Two pages explain the parts most people ask about:
 * [How the agent learns who succeeds](docs/HOW_THE_AGENT_LEARNS.md): the calibration workbook, the test gate, and how interview outcomes reweight signals.
 * [Plain-English guide for talent leaders](docs/GUIDE_FOR_TALENT_LEADERS.md)
 * [Build your ecosystem map](docs/BUILD_YOUR_ECOSYSTEM.md): where your job family leaves evidence, plus a prompt that drafts the map for any JD
+* [Run a pilot on a real role](docs/RUN_A_PILOT.md): step-by-step setup, the test gate, and the metrics to collect for a case study
+* [Hidden-text guard](docs/HIDDEN_TEXT_GUARD.md): catches white text, hidden instructions and invisible characters in resumes, PDFs and harvested pages
+* [Known limits and roadmap](docs/KNOWN_LIMITS_AND_ROADMAP.md): what the agent does not do well yet
 
 ![How the agent learns who succeeds](docs/images/learning-loop.png)
 
@@ -207,6 +210,7 @@ src/icsa/harvesters/   github, patents, openalex, talks (parse functions are pur
 src/icsa/identity.py   identity gate
 src/icsa/scorer.py     fail-closed tiering
 src/icsa/judge.py      optional AI judgment step with quote verification
+src/icsa/guard.py      hidden-text and instruction guard for evidence, PDFs and Word files
 src/icsa/ecosystem.py  the ecosystem map: harvest, verify and taxonomy entries
 src/icsa/taxonomy.py   suggests domain terms from taxonomy pages
 src/icsa/evaluate.py   test gate against your tiered test set
