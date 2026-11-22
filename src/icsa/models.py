@@ -115,6 +115,7 @@ class Candidate:
     signals: list[Check] = field(default_factory=list)
     signal_score: float = 0.0
     screen_questions: list[str] = field(default_factory=list)
+    integrity_flags: list[str] = field(default_factory=list)  # from icsa.guard; shown in the Integrity output
 
     @property
     def channels(self) -> set[str]:

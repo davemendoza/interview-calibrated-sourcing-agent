@@ -27,6 +27,7 @@ DEFAULT_LABELS = {
     "tier3": "Pipeline depth",
     "pending": "Pending research",          # no domain evidence yet; never a guessed tier
     "identity_review": "Identity review",   # same-name records not yet confirmed as one person
+    "integrity_review": "Integrity review", # evidence held back: hidden or instructing text found
 }
 
 

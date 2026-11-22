@@ -23,7 +23,15 @@ def _text(el) -> str:
 
 
 def _clean(html: str) -> str:
-    return re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", html or "")).strip()
+    """Visible text only. Text hidden with CSS or HTML attributes is not scored; when it
+    holds instructions or stuffed keywords, a note is kept so icsa.guard holds the item."""
+    from .. import guard
+
+    text, findings = guard.split_hidden_html(html or "")
+    flagged = [f.excerpt for f in findings if f.severity == guard.HIGH and f.excerpt]
+    if flagged:
+        text = f"{text} [hidden page text: {' / '.join(flagged)}]"
+    return text
 
 
 def _authors_rss(item) -> list[str]:
